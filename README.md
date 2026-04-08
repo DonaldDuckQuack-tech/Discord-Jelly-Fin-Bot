@@ -1,4 +1,4 @@
-**# Discord-Jelly-Fin-Bot**
+# **Discord-Jelly-Fin-Bot**
 
 **Command:** !clearqueue **Usage:** Command to clear the queue
 
