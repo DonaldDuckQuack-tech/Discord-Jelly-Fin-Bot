@@ -1,8 +1,11 @@
 # Discord-Jelly-Fin-Bot
 
 Command: !clearqueue Usage: Command to clear the queue
+
 Command: !help Usage: Shows this message
+
 Command: !instantmix Usage: Command to add a instantmix to the queue
+
 Command: !join Usage: Command to make the bot join the voice channel
 Command: !leave Usage: Command to make the bot leave the voice channel
 Command: !loop Usage: Command to loop a song
