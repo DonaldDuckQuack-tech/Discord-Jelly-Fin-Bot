@@ -1,4 +1,5 @@
 # Discord-Jelly-Fin-Bot
+
 Command: !clearqueue Usage: Command to clear the queue
 Command: !help Usage: Shows this message
 Command: !instantmix Usage: Command to add a instantmix to the queue
