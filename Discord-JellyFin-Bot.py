@@ -8,9 +8,8 @@ import requests
 import aiohttp
 import random
 
-
 # Replace with your bot's token
-TOKEN = "YOUR_TOKEN"  # Test Bot
+TOKEN = 'YOUR_BOT_TOKEN'
 playall_active = False
 song_list = []
 queue_list = []
@@ -19,17 +18,15 @@ data = []
 
 intents = discord.Intents.default()
 intents.message_content = True
-bot = commands.Bot(command_prefix="!", intents=intents)
+bot = commands.Bot(command_prefix='!', intents=intents)
 bot.remove_command('help')
 
 # Define connection details
-server_url = 'https://YOUR_JELLYFIN_SERVER_IP'  # Replace with your Jellyfin server URL
-api_key = "YOUR_API_KEY"  # Your Jellyfin API key
-download_urls = (
-    server_url + "/Items/<id>/Download?api_key=" + api_key
-)  # Replace with your actual URL
-custom_download_path = "./cache/song_file.flac"  # Custom location to save the song
-ffmpeg_path = r"YOUR_FFMPEG_PATH_IF_NEEDED"
+server_url = 'YOUR_JELLYFIN_SERVER_URL' # Replace with your Jellyfin server URL
+api_key = 'YOUR_API_KEY'  # Your Jellyfin API key
+download_urls = server_url + '/Items/<id>/Download?api_key=a82d70c04eb544a896a8120fdbf8dae2'  # Replace with your actual URL
+custom_download_path = './cache/song_file.flac'  # Custom location to save the song
+ffmpeg_path = r'H:\Program Files\ffmpeg-master-latest-win64-gpl-shared\bin\ffmpeg.exe'
 ffmpeg_path_required = False
 
 # Directory where the songs are stored
@@ -143,23 +140,45 @@ async def play(ctx, *, song_name = ""):
         await error(ctx, "You need to specifify a id!")
         return
     
-
-
+    song_list = ""
+    if " " in song_name:
+        song_name = song_name.replace(" ", "")
+        if "," in song_name:
+            song_list = song_name.split(",")
+    elif "," in song_name:
+            song_list = song_name.split(",")
+    else:
+        song_list + song_name
     # Join the song name parts into a single string (in case it's multi-word)
     songs = await get_song_list()
 
     # Check if the song is in the available list
     selected = []
-    for i in songs:
-        song = i["Id"]
-        if song.casefold() == song_name:
-            selected.append(i)
-            break
-        else:
-            continue
-    else:
-        await error(ctx, f"Sorry, I can't find a song called '{song_name}'. Please choose from !songs")
+    songed_list = song_list
+    for ii in songed_list[:]:
+        for i in songs:
+            song = i["Id"]
+            if song.casefold() == ii.casefold():
+                selected.append(i)
+                print(song_list)
+                print(ii)
+                print(i)        
+                song_list.remove(ii)
+                if len(song_list) == 0:
+                    break
+        continue
+
+    print("Selected: " + str(selected))
+    print("Song_list: " + str(song_list))
+
+    if len(selected) == 0:
+        await error(ctx, f"Sorry, I can't find any of the song/songs provided. Please choose from !songs")
         return
+    
+    if len(song_list) >= 1:
+        invalid = len(song_list)
+        print(song_list)
+        await error(ctx, f"Found {invalid} invalid song ids")
 
     await playqueue(ctx, selected)
 
@@ -228,7 +247,7 @@ async def on_command_error(ctx, error):
 @bot.command()
 async def version(ctx):
     # Check if the error is CommandNotFound
-    await success(ctx, "Blaik Network JellyFin Music Bot Version: 2.6.3")
+    await success(ctx, "Blaik Network JellyFin Music Bot Version: 2.9")
 
 async def playqueue(ctx, song_name):
     global queue_list
@@ -256,13 +275,13 @@ async def playqueue(ctx, song_name):
                     await asyncio.sleep(1)  #
                 if not queue_list:
                     playing = False
-                    await ctx.embeded(ctx, f"Queue is Empty", "Add more songs to continue playing!")
+                    await embeded(ctx, f"Queue is Empty", "Add more songs to continue playing!")
                     await ctx.voice_client.disconnect()
                     break
             if not queue_list:
                 if playing:
                     playing = False
-                    await ctx.embeded(ctx, f"Queue is Empty", "Add more songs to continue playing!")
+                    await embeded(ctx, f"Queue is Empty", "Add more songs to continue playing!")
                     await ctx.voice_client.disconnect()
                 else:
                     continue
@@ -360,7 +379,6 @@ async def stop(ctx):
             global playing
             playing = False
             await success(ctx, "Stopped the current song.")
-        await ctx.voice_client.disconnect()
     else:
         await error(ctx, "No audio is currently playing.")
 
@@ -410,14 +428,14 @@ async def randomplaylist(ctx, *keywords: str):
                     songe = []
                     songe.append(songd)
                     songeee = songe[0]
-                    if search_query.casefold() in songeee["Album"].casefold():
+                    if search_query.casefold() == songeee["Album"].casefold():
                         songs.append(songd)
                 elif keywords[0].lower() == "artist:":
                     songe = []
                     songe.append(songd)
                     songeee = songe[0]
                     for songee in songeee["Artists"]:
-                        if search_query.casefold() in songee.casefold():
+                        if search_query.casefold() == songee.casefold():
                             songs.append(songd)
             else:
                 songs.append(songd)
@@ -518,10 +536,10 @@ async def playall(ctx):
 
         Artists = song_name.get("Artists")
         Artist = Artists[0]
-        songe = f"{song_name.get('Name')} | Artist: {Artist} | Album: {song_name.get('Album')} | Id: {song_name.get('Id')}\n"
+        songe = f"{song_name.get('Name')} | **Artist:** {Artist} | **Album:** {song_name.get('Album')} | **Id:** {song_name.get('Id')}"
 
         if await plays(ctx, songe):
-            await nowplayingEmbed(ctx, song_name)
+            await nowplayingEmbed(ctx, songe)
         else:
             await error(ctx, f"Song '{songe}' not found!")
 
@@ -582,14 +600,15 @@ async def loop(ctx, *, song_name = " "):
         if not looping:  # Check if playall_active is False to break the loop
             break
 
-        Artists = song_name.get("Artists")
+        Artists = song.get("Artists")
         Artist = Artists[0]
-        songe = f"{song_name.get('Name')} | Artist: {Artist} | Album: {song_name.get('Album')} | Id: {song_name.get('Id')}\n"
+        songe = f"{song.get('Name')} | **Artist:** {Artist} | **Album:** {song.get('Album')} | **Id:** {song.get('Id')}"
 
         if await plays(ctx, songe):
-            await nowplayingEmbed(ctx, song_name)
+            await nowplayingEmbed(ctx, songe)
         else:
-            await error(ctx, f"Song '{songe}' not found!")
+            looping = False
+            await error(ctx, f"Song '{song_name}' not found!")
 
         while ctx.voice_client.is_playing():
             await asyncio.sleep(1)  # Wait until the song finishes
@@ -623,19 +642,19 @@ async def search(ctx, *keywords: str):
     if keywords[0].lower() == "album:":
         search_query = search_query.replace("album: ", "")
         for song in song_list:
-            if search_query.lower() in song["Album"].lower():
+            if search_query.lower() == song["Album"].lower():
                 match = str(song["Name"] + " | Id: " + song["Id"] + "\n")
                 matching_songs.append(match)
     elif keywords[0].lower() == "artist:":
         search_query = search_query.replace("artist: ", "")
         for song in song_list:
             for songe in song["Artists"]:
-                if search_query in songe.lower():
+                if search_query == songe.lower():
                     match = str(song["Name"] + " | Id: " + song["Id"] + "\n")
                     matching_songs.append(match)
     else:
         for song in song_list:
-            if search_query in song["Name"].lower():
+            if search_query == song["Name"].lower():
                 match = str(song["Name"] + " | Id: " + song["Id"] + "\n")
                 matching_songs.append(match)
 
