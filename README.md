@@ -1,5 +1,7 @@
 # **Discord-Jelly-Fin-Bot**
 
+**Command:** !play **Usage:** play song by Id
+
 **Command:** !clearqueue **Usage:** Command to clear the queue
 
 **Command:** !help **Usage:** Shows this message
