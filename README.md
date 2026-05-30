@@ -1,6 +1,11 @@
 # Discord-Jelly-Fin-Bot
 A Bot to play and control music from a Jellyfin server on discord
 
+### installation
+1. download the latest version from https://github.com/DonaldDuckQuack-tech/Discord-Jelly-Fin-Bot/releases/latest/
+2. from within the source code directory run: pip install -r requirements.txt
+3. run: python main.py
+
 ### Commands
 
 #### <ins>!clearqueue</ins>
