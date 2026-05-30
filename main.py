@@ -1,5 +1,5 @@
 import asyncio
-from Discord-JellyFin-Bot import main as botmain
+from DiscordJellyFinBot import main as botmain
 from api import main as apimain
 
 async def main():
