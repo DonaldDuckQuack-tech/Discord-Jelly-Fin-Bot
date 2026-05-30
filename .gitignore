@@ -1,0 +1,15 @@
+# Ignore OS system files
+.DS_Store
+Thumbs.db
+
+# Ignore dependency directories
+/cache/
+
+# Ignore build files and logs
+/build/
+/dist/
+*.log
+config.cfg
+
+# Ignore local environment configurations
+.env

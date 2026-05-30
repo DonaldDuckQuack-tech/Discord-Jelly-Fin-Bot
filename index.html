@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <title>Discord Jellyfin Bot</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background: #121212;
+                color: white;
+                padding: 40px;
+            }
+            .card {
+                background: #1e1e1e;
+                padding: 20px;
+                border-radius: 10px;
+                max-width: 600px;
+            }
+
+            h1 {
+                color: #00bcd4;
+            }
+
+            pre {
+                background: #2a2a2a;
+                padding: 10px;
+                border-radius: 5px;
+                overflow-x: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="card">
+            <h1>Discord Jellyfin Bot</h1>
+
+            <h2>Currently Playing</h2>
+            <pre>{bot.playing}</pre>
+
+            <h2>Queue</h2>
+            <pre>{bot.queue_list}</pre>
+        </div>
+    </body>
+    </html>

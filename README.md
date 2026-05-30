@@ -1,37 +1,111 @@
-# **Discord-Jelly-Fin-Bot**
+# Discord-Jelly-Fin-Bot
+A Bot to play and control music from a Jellyfin server on discord
 
-**Command:** !play **Usage:** play song by Id
+### Commands
 
-**Command:** !clearqueue **Usage:** Command to clear the queue
+#### <ins>!clearqueue</ins>
 
-**Command:** !help **Usage:** Shows this message
+**Description:** Command to clear the queue.  
+**Usage:** !clearqueue
 
-**Command:** !instantmix **Usage:** Command to add a instantmix to the queue
+#### <ins>!help</ins>
 
-**Command:** !join **Usage:** Command to make the bot join the voice channel
+**Description:** Lists all available commands  
+**Usage:** !help
 
-**Command:** !leave **Usage:** Command to make the bot leave the voice channel
+#### <ins>!instantmix</ins>
 
-**Command:** !loop **Usage:** Command to loop a song
+**Description:** Command to add an instantmix to the queue.  
+**Usage:** !instantmix [id] [limit]
 
-**Command:** !play **Usage:** Command to add a song to the queue
+#### <ins>!loop</ins>
 
-**Command:** !playall **Usage:** Command to play all the songs in the list one by one
+**Description:** Command to play loop a song from the list.  
+**Usage:** !loop [song_name]
 
-**Command:** !queue **Usage:** Command to show what is currently in the queue
+#### <ins>!pause</ins>
 
-**Command:** !randomplaylist **Usage:** Command to add multiple songs to the queue based on album, artist or random song
+**Description:** Command to pause currently playing audio  
+**Usage:** !pause
 
-**Command:** !randomsong **Usage:** Command to add a random song to the queue
+#### <ins>!ping</ins>
 
-**Command:** !search **Usage:** Command to search for songs based on the artist, album or song name
+**Description:** Command to ping the bot  
+**Usage:** !ping
 
-**Command:** !skip **Usage:** Command to skip the currently playing song
+#### <ins>!play</ins>
 
-**Command:** !songs **Usage:** Command to list all the available songs
+**Description:** Command to add a song/s to the queue.  
+**Usage:** !play [song_name]
 
-**Command:** !stop **Usage:** Command to stop any currently playing music
+#### <ins>!playall</ins>
 
-**Command:** !updatesongs **Usage:** Command to update the songs database for the bot
+**Description:** Command to play all the songs in the list one by one.  
+**Usage:** !playall
 
-**Command:** !version **Usage:** Command to show the bot name and version
+#### <ins>!playnext</ins>
+
+**Description:** Command to add a song/s next in the queue.  
+**Usage:** !playnext [song_name]
+
+#### <ins>!playnow</ins>
+
+**Description:** Command to add a song/s next in the queue and play them.  
+**Usage:** !playnow [song_name]
+
+#### <ins>!queue</ins>
+
+**Description:** Command to show what is currently in the queue.  
+**Usage:** !queue [page]
+
+#### <ins>!randomplaylist</ins>
+
+**Description:** Command to add multiple songs to the queue based on album, artist or random songs.  
+**Usage:** !randomplaylist <keywords...>
+
+#### <ins>!randomsong</ins>
+
+**Description:** Command to add a random song to the queue.  
+**Usage:** !randomsong
+
+#### <ins>!remove</ins>
+
+**Description:** Command to remove a song from the queue.  
+**Usage:** !remove [song_name]
+
+#### <ins>!resume</ins>
+
+**Description:** Command to resume currently playing audio  
+**Usage:** !resume
+
+#### <ins>!search</ins>
+
+**Description:** Command to search for songs based on the artist, album or song name.  
+**Usage:** !search <keywords...>
+
+#### <ins>!skip</ins>
+
+**Description:** Command to skip the currently playing song.  
+**Usage:** !skip
+
+#### <ins>!songs</ins>
+
+**Description:** Command to list all available songs, paginated by 10 songs per page.  
+**Usage:** !songs [page]
+
+#### <ins>!stop</ins>
+
+**Description:** Command to stop any currently playing music.  
+**Usage:** !stop
+
+#### <ins>!updatesongs</ins>
+
+**Description:** Command to update the songs database for the bot.  
+**Usage:** !updatesongs
+
+#### <ins>!version</ins>
+
+**Description:** Command to show JellyFin Music Bot Version  
+**Usage:** !version
+
+
