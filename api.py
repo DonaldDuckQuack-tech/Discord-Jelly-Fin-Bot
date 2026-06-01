@@ -31,7 +31,8 @@ async def home():
 @app.api_route("/api/play/", methods=["GET", "POST"])
 async def play(song_name: str):    
     try:
-        await commands.play(song_name)
+        result =await commands.play(song_name)
+        return result
     except Exception as e:
         return (f"error playing: {e}")
 

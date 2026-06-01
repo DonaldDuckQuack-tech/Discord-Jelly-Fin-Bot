@@ -1,4 +1,5 @@
-import configparser 
+import configparser
+import os 
 import aiohttp
 import discord
 from discord import FFmpegPCMAudio
@@ -90,6 +91,7 @@ async def download(song_id):
         try:
             async with session.get(url) as response:
                 if response.status == 200:  # Check if the response is OK
+                    os.makedirs(os.path.dirname(custom_download_path), exist_ok=True)
                     with open(custom_download_path, "wb") as f:
                         while True:
                             chunk = await response.content.read(1024)
@@ -335,48 +337,56 @@ def songs():
         print(f"Error: {response.status_code} - {response.text}")
         return None, None
 
-async def playqueue(song_name):
-    print("Playing queue...")
-    songe = ""
-    songformatted = ""
-    message = []
-    #print(song_name)
-    for i in song_name:
-        artists_array = i.get("Artists")
-        artist = artists_array[0]
-        songe = f"{i.get('Name')} | **Artist:** {artist} | **Album:** {i.get('Album')} | **Id:** {i.get('Id')}"
-        songformatted = f"| {i.get('Name')} \n| Artist: {artist} \n| Album: {i.get('Album')} \n| Id: {i.get('Id')}"
-        player.queue_list.append(songe)
-        print(f"playing is {player.playing}")
-    if player.playing == True:
-         await success(f"{songformatted} \nadded to Queue!")
-    else:
-        player.playing = True
-        await success(f"{songformatted} \nadded to Queue!")
-        while player.playing:
-            for i in range(len(player.queue_list)):
-                song = player.queue_list[0]
-                if await plays(song):
-                    await nowplayingEmbed(song)
-                    message.append(f"Finished Playing {songformatted}")
-                else:
-                    await error(f"Song '{song}' not found!")
-                    message.append(f"Song '{song}' not found!")
-                player.queue_list.remove(song)
+import asyncio
 
-                await player.song_finished.wait()  
-                if not player.queue_list:
-                    player.playing = False
-                    await embeded("Queue is Empty ", "Add more songs to continue playing!")
-                    message.append("Queue is Empty " + "Add more songs to continue playing!")
-                    await player.channel.disconnect()
-                    break
-            if not player.queue_list:
-                if player.playing:
-                    player.playing = False
-                    await embeded("Queue is Empty ", "Add more songs to continue playing!")
-                    message.append("Queue is Empty " + "Add more songs to continue playing!")
-                    await player.channel.disconnect()
-                else:
-                    continue
-    return message
+async def playqueue(songs):
+
+    for song in songs:
+        artist = song["Artists"][0]
+
+        queue_item = (
+            f"{song['Name']} | "
+            f"**Artist:** {artist} | "
+            f"**Album:** {song['Album']} | "
+            f"**Id:** {song['Id']}"
+        )
+
+        player.queue_list.append(queue_item)
+
+    await success(f"Added {len(songs)} song(s) to queue!")
+
+    # Start queue worker if not already running
+    if not player.playing:
+        player.playing = True
+        asyncio.create_task(process_queue())
+
+    return "Queued successfully"
+
+async def process_queue():
+
+    try:
+        while player.queue_list:
+
+            song = player.queue_list.pop(0)
+
+            if await plays(song):
+
+                await nowplayingEmbed(song)
+
+                # Wait until FFmpeg playback finishes
+                await player.song_finished.wait()
+
+            else:
+                await error(f"Song {song} not found!")
+
+    finally:
+
+        player.playing = False
+
+        await embeded(
+            "Queue is Empty",
+            "Add more songs to continue playing!"
+        )
+
+        if player.channel:
+            await player.channel.disconnect()

@@ -33,58 +33,42 @@ async def skip():
     
 
 async def play(song_name):
-    
-    if song_name == "":
-        await helpers.error("You need to specifify an id!")
+
+    if not song_name:
+        await helpers.error("You need to specify an id!")
         return
-    
+
     song_list = []
-    if " " in song_name:
-        song_name = song_name.replace(" ", "")
-        if "," in song_name:
-            song_list = song_name.split(",")
-    elif "," in song_name:
-            song_list = song_name.split(",")
+
+    song_name = song_name.replace(" ", "")
+
+    if "," in song_name:
+        song_list = song_name.split(",")
     else:
         song_list.append(song_name)
-    # Join the song name parts into a single string (in case it's multi-word)
+
     songs = await helpers.get_song_list()
-    print("songs fetched...")
-
-    # Check if the song is in the available list
-
-    print("Song_list: " + str(song_list))
 
     selected = []
-    songed_list = song_list
-    print("Checking song against database...")
-    for ii in songed_list[:]:
-        for i in songs:
-            song = i["Id"]
-            if song.casefold() == ii.casefold():
-                selected.append(i)
-                print(song_list)
-                print(ii)
-                print(i)        
-                song_list.remove(ii)
-                if len(song_list) == 0:
-                    break
 
-    print("Selected: " + str(selected))
-    print("Song_list: " + str(song_list))
+    for requested_id in song_list[:]:
+        for song in songs:
+            if song["Id"].casefold() == requested_id.casefold():
+                selected.append(song)
+                song_list.remove(requested_id)
+                break
 
-    if len(selected) == 0:
-        await helpers.error(f"Sorry, I can't find any of the song/songs provided. Please choose from !songs")
-        return (f"Sorry, I can't find any of the song/songs provided. Please choose from !songs")
-    
-    if len(song_list) >= 1:
-        invalid = len(song_list)
-        print(song_list)
-        await helpers.error(f"Found {invalid} invalid song ids")
+    if not selected:
+        await helpers.error(
+            "Sorry, I can't find any of the songs provided. Please choose from !songs"
+        )
+        return
 
-    print("calling playqueue...")
+    if song_list:
+        await helpers.error(f"Found {len(song_list)} invalid song ids")
 
     result = await helpers.playqueue(selected)
+
     return result
     
 
