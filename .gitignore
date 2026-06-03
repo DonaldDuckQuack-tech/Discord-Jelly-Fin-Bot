@@ -4,12 +4,12 @@ Thumbs.db
 
 # Ignore dependency directories
 /cache/
+/__pycache__/
 
 # Ignore build files and logs
 /build/
 /dist/
 *.log
-config.cfg
 
 # Ignore local environment configurations
 .env
