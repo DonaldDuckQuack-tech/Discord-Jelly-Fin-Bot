@@ -15,12 +15,14 @@ port = config.getint('API', 'port')
 # FastAPI server
 app = FastAPI()
 
+player = None
+
 def setup(music_player):
     global player
     player = music_player
 
 
-app.get("/")
+@app.get("/")
 async def web_home():
     return FileResponse("index.html")
 
@@ -43,7 +45,7 @@ async def clearqueueapi():
 
 @app.api_route("/api/queue/", methods=["GET", "POST"])
 async def queueapi():
-    result = await commands.queue()
+    result = player.queue_list
     return result
 
 @app.api_route("/api/skip/", methods=["GET", "POST"])
@@ -85,7 +87,7 @@ async def songs():
 
 @app.get("/api/currentlyplayingsong/")
 async def currently_playing_song():
-    return commands.nowplaying()
+    return player.nowplaying()
 
 @app.get("/api/playnow/")
 async def playnow():

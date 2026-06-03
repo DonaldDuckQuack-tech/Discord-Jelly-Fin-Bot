@@ -67,7 +67,8 @@ A Bot to play and control music from a Jellyfin server on discord
 #### <ins>!randomplaylist</ins>
 
 **Description:** Command to add multiple songs to the queue based on album, artist or random songs.  
-**Usage:** !randomplaylist <keywords...>
+**Usage:** !randomplaylist [artist: or album:] <artist name> <number of songs to add>
+example: !randomplaylist  artist: P!NK 5
 
 #### <ins>!randomsong</ins>
 

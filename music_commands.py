@@ -62,7 +62,7 @@ async def play(song_name):
         await helpers.error(
             "Sorry, I can't find any of the songs provided. Please choose from !songs"
         )
-        return
+        return "Sorry, I can't find any of the songs provided. Please choose from !songs"
 
     if song_list:
         await helpers.error(f"Found {len(song_list)} invalid song ids")
@@ -377,7 +377,7 @@ async def stop():
 
 
 
-async def randomplaylist( keywords: str):
+async def randomplaylist(keywords):
     """Command to add multiple songs to the queue based on album, artist or random songs."""
 
     if keywords:
@@ -394,11 +394,11 @@ async def randomplaylist( keywords: str):
 
     if count < 10001:
         # Join the song name parts into a single string (in case it's multi-word)
-        song = []
-        songss = await helpers.get_song_list()
-        songs = []
-        for songd in songss:
-            if keywords:
+        randomsongslist = []
+        serversongslist = await helpers.get_song_list()
+        foundsongs = []
+        for songd in serversongslist:
+            if keywords != " ":
                 keyword = keywords[1:]
                 search_query = " ".join(keyword).lower()
                 search_query = str(search_query)
@@ -407,27 +407,29 @@ async def randomplaylist( keywords: str):
                     songe.append(songd)
                     songeee = songe[0]
                     if search_query.casefold() in songeee["Album"].casefold():
-                        songs.append(songd)
-                elif keywords[0].lower() == "artist:":
+                        foundsongs.append(songd)
+                elif keywords[0].casefold() == "artist:":
                     songe = []
                     songe.append(songd)
                     songeee = songe[0]
                     for songee in songeee["Artists"]:
                         if search_query.casefold() in songee.casefold():
-                            songs.append(songd)
+                            foundsongs.append(songd)
             else:
-                songs.append(songd)
+                foundsongs.append(songd)
 
-        if songs:
+        if foundsongs:
             for i in range(count):
-                integer = random.randint(0, len(songs) - 1)
-                song.append(songs[integer])
-            await helpers.playqueue(song)
+                integer = random.randint(0, len(foundsongs) - 1)
+                randomsongslist.append(foundsongs[integer])
+            await helpers.playqueue(randomsongslist)
+            return "Songs added to the queue!"
         else:
             await helpers.error("No Songs were found!")
-
+            return "No Songs were found!"
     else:
         await helpers.error("You can only add 10,000 songs at a time!")
+        return "You can only add 10,000 songs at a time!"
 
 
 
