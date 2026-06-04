@@ -15,8 +15,6 @@ port = config.getint('API', 'port')
 # FastAPI server
 app = FastAPI()
 
-player = None
-
 def setup(music_player):
     global player
     player = music_player
@@ -31,9 +29,9 @@ async def home():
     return {"status": "online"}
 
 @app.api_route("/api/play/", methods=["GET", "POST"])
-async def play(song_name: str):    
+async def play(song_name=" "):    
     try:
-        result =await commands.play(song_name)
+        result = await commands.play(song_name)
         return result
     except Exception as e:
         return (f"error playing: {e}")
@@ -53,53 +51,55 @@ async def skipapi():
     result = await commands.skip()
     return result
 
-@app.get("/api/randomplaylist/")
-async def randompl():
-    return commands.randomplaylist
+@app.api_route("/api/randomplaylist/", methods=["GET", "POST"])
+async def randompl(args: str = ""):
+    args = tuple(args.split())
+    result = await commands.randomplaylist(args)
+    return result
 
 @app.get("/api/randomsong/")
 async def randoms():
-    return commands.randomsong()
+    return await commands.randomsong()
 
 @app.get("/api/pause/")
 async def pause():
-    return commands.pause()
+    return await commands.pause()
 
 @app.get("/api/resume/")
 async def resume():
-    return commands.resume()
+    return await commands.resume()
 
 @app.get("/api/stop/")
 async def stop():
-    return commands.stop()
+    return await commands.stop()
 
 @app.get("/api/loop/")
-async def loop():
-    return commands.loop()
+async def loop(id=""):
+    return await commands.loop(id)
 
 @app.get("/api/instantmix/")
 async def instantmix():
-    return commands.instantmix()
+    return await commands.instantmix()
 
 @app.get("/api/songs/")
 async def songs():
-    return commands.songs()
+    return await commands.songs()
 
 @app.get("/api/currentlyplayingsong/")
 async def currently_playing_song():
-    return player.nowplaying()
+    return player.nowplaying
 
 @app.get("/api/playnow/")
 async def playnow():
-    return commands.playnow()
+    return await commands.playnow()
 
 @app.get("/api/playnext/")
 async def playnext():
-    return commands.playnext()
+    return await commands.playnext()
 
 @app.get("/api/updatesongs/")
 async def updatesongs():
-    return commands.updatesongs()
+    return await commands.updatesongs()
 
 
 async def start_api(port):
