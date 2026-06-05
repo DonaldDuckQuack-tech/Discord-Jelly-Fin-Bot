@@ -6,11 +6,13 @@ import helpers
 
 player = None
 bot = None
+VERSION = None
 
-def setup(bott, music_player):
-    global bot, player
+def setup(bott, music_player, APPVERSION):
+    global bot, player, VERSION
     bot = bott
     player = music_player
+    VERSION = APPVERSION
     helpers.setup(bott, music_player)
 
 async def skip():
@@ -36,7 +38,7 @@ async def play(song_name):
 
     if not song_name:
         await helpers.error("You need to specify an id!")
-        return
+        return "You need to specify an id!"
 
     song_list = []
 
@@ -66,6 +68,7 @@ async def play(song_name):
 
     if song_list:
         await helpers.error(f"Found {len(song_list)} invalid song ids")
+        
 
     result = await helpers.playqueue(selected)
 
@@ -77,13 +80,16 @@ async def leave():
     if player.channel:
         player.channel.disconnect()
         await helpers.success("Disconnected from the voice channel")
+        return "Disconnected from the voice channel"
     else:
         await helpers.error("I'm not connected to a voice channel!")
+        return "I'm not connected to a voice channel!"
 
 
 async def ping():
     """Command to make the bot leave the voice channel"""
     await helpers.success("Pong!")
+    return "Pong!"
 
 
 
@@ -92,12 +98,12 @@ async def playnext(song_name):
     """Command to add a song to the queue."""    
     
     if not song_name:
-        await helpers.error("You need to specifify a id!")
-        return
+        await helpers.error("You need to specifify an id!")
+        return "You need to specifify an id!"
     
     if not player.queue_list:
         await helpers.error("The queue is currently Empty.")
-        return
+        return "The queue is currently Empty."
 
     song_list = ""
     if " " in song_name:
@@ -129,11 +135,12 @@ async def playnext(song_name):
 
     if len(selected) == 0:
         await helpers.error(f"Sorry, I can't find any of the song/songs provided. Please choose from !songs")
-        return
+        return "Sorry, I can't find any of the song/songs provided. Please choose from !songs"
     
     if len(song_list) >= 1:
         invalid = len(song_list)
         await helpers.error(f"Found {invalid} invalid song ids")
+        print(f"Found {invalid} invalid song ids")
 
     list = player.queue_list[:]
     player.queue_list.clear()
@@ -146,6 +153,7 @@ async def playnext(song_name):
         player.queue_list.append(ii)
     
     await helpers.success("The " + str(len(selected)) + " id/s provided will play next in the queue!")
+    return "The " + str(len(selected)) + " id/s provided will play next in the queue!"
 
 
 async def playnow(song_name):
@@ -153,11 +161,11 @@ async def playnow(song_name):
         
     if not song_name:
         await helpers.error("You need to specifify an id!")
-        return
+        return "you need to specifify an id!"
     
     if not player.queue_list:
         await helpers.error("The queue is currently Empty.")
-        return
+        return "The queue is currently Empty."
     
     song_list = ""
     if " " in song_name:
@@ -189,11 +197,12 @@ async def playnow(song_name):
 
     if len(selected) == 0:
         await helpers.error(f"Sorry, I can't find any of the song/songs provided. Please choose from !songs")
-        return
+        return "Sorry, I can't find any of the song/songs provided. Please choose from !songs"
     
     if len(song_list) >= 1:
         invalid = len(song_list)
         await helpers.error(f"Found {invalid} invalid song ids")
+        print(f"Found {invalid} invalid song ids")
 
     list = player.queue_list[:]
     player.queue_list.clear()
@@ -207,6 +216,7 @@ async def playnow(song_name):
     
     player.channel.stop()
     await helpers.success("The " + str(len(selected)) + " id/s provided will play now/next in the queue!")
+    return "The " + str(len(selected)) + " id/s provided will play now/next in the queue!"
 
 
 async def pause():
@@ -214,8 +224,10 @@ async def pause():
     if  player.channel and (player.channel.is_playing() or player.channel.is_paused()):
         player.channel.pause()
         await helpers.success("Playback has been paused!")
+        print("Playback has been paused!")
     else:
         await helpers.error("Nothing to Pause!")
+        return "Nothing to Pause!"
 
 
 async def resume():
@@ -223,8 +235,10 @@ async def resume():
     if player.channel and (player.channel.is_playing() or player.channel.is_paused()):
         player.channel.resume()
         await helpers.success("Playback has been resumed!")
+        print("Playback has been resumed!")
     else:
         await helpers.error("Nothing to resume!")
+        return "Nothing to resume!"
 
 
 async def remove( *, song_name = ""):
@@ -232,12 +246,11 @@ async def remove( *, song_name = ""):
     
     if song_name == "":
         await helpers.error("You need to specifify an id!")
-        return
+        return "You need to specifify an id!"
     
     if not player.queue_list:
         await helpers.error("The queue is currently Empty.")
-        return
-    
+        return "The queue is currently Empty."
     song_list = ""
     if " " in song_name:
         song_name = song_name.replace(" ", "")
@@ -268,11 +281,12 @@ async def remove( *, song_name = ""):
 
     if len(selected) == 0:
         await helpers.error(f"Sorry, I can't find any of the song/songs provided. Please choose from !songs")
-        return
+        return "Sorry, I can't find any of the song/songs provided. Please choose from !songs"
     
     if len(song_list) >= 1:
         invalid = len(song_list)
         await helpers.error(f"Found {invalid} invalid song ids")
+        print(f"Found {invalid} invalid song ids")
 
     for i in selected:
         for ii in player.queue_list[:]:
@@ -283,11 +297,12 @@ async def remove( *, song_name = ""):
                 player.queue_list.remove(songe)
 
     await helpers.success("Removed " + str(len(selected)) + " ids from the Queue!")
-
+    return "Removed " + str(len(selected)) + " ids from the Queue!"
 
 async def version():
     # Check if the error is CommandNotFound
-    await helpers.success("Blaik Network JellyFin Music Bot Version: 3.0")
+    await helpers.success(f"Blaik Network JellyFin Music Bot Version: {VERSION}")
+    return f"Blaik Network JellyFin Music Bot Version: {VERSION}"
 
 
 async def randomsong():
@@ -303,6 +318,7 @@ async def randomsong():
         print("played song...")
     except Exception as e:
         print(f"randomerror: {e}")
+    return "Random song added to the queue!"
 
 
 async def queue( page=1):
@@ -321,7 +337,7 @@ async def queue( page=1):
         # If the page number is invalid, notify the user
         if page < 1 or page > total_pages:
             await helpers.error(f"Invalid page number. Please choose a page between 1 and {total_pages}.")
-            return
+            return f"Invalid page number. Please choose a page between 1 and {total_pages}."
 
         # Get the songs for the current page
         page_songs = songs[start:end]
@@ -336,8 +352,10 @@ async def queue( page=1):
 
         # Send the message to the channel
         await helpers.embeded(f"**Page {page}/{total_pages}, The following songs are in the queue!:**", message)
+        return f"Page {page}/{total_pages}, The following songs are in the queue!: {message}"
     else:
         await helpers.error(f"The Queue is empty!")
+        return f"The Queue is empty!"
 
 
 
@@ -360,16 +378,21 @@ async def stop():
             if player.playall_active:
                 player.playall_active = False
                 await helpers.success("The playall queue has been stopped.")
+                message = "The playall queue has been stopped."
             elif player.looping:
                 player.looping = False
                 await helpers.success("The loop has been stopped.")
+                message = "The loop has been stopped."
             else:
                 player.playing = False
                 await helpers.success("Stopped the current song.")
+                message = "Stopped the current song."
             player.queue_list = []
             voice.stop()
+            return message
         else:
             await helpers.error("No audio is currently playing.")
+            return "No audio is currently playing."
     except Exception as e:
         print(f"Error occurred while executing stop: {e}")
 
@@ -377,59 +400,64 @@ async def stop():
 
 
 
+import random
+
 async def randomplaylist(keywords):
-    """Command to add multiple songs to the queue based on album, artist or random songs."""
+    """Add multiple random songs to the queue based on album, artist, or all songs."""
+
+    # Determine song count
+    count = 10
 
     if keywords:
         try:
-            # Try to cast the last keyword to an integer
             count = int(keywords[-1])
-            # If it's valid, remove it from the keywords
             keywords = keywords[:-1]
         except ValueError:
-            # If the last keyword is not a number, default page to 1
-            count = 10
-    else:
-        count = 10
+            pass
 
-    if count < 10001:
-        # Join the song name parts into a single string (in case it's multi-word)
-        randomsongslist = []
-        serversongslist = await helpers.get_song_list()
-        foundsongs = []
-        for songd in serversongslist:
-            if keywords != " ":
-                keyword = keywords[1:]
-                search_query = " ".join(keyword).lower()
-                search_query = str(search_query)
-                if keywords[0].casefold() == "album:":
-                    songe = []
-                    songe.append(songd)
-                    songeee = songe[0]
-                    if search_query.casefold() in songeee["Album"].casefold():
-                        foundsongs.append(songd)
-                elif keywords[0].casefold() == "artist:":
-                    songe = []
-                    songe.append(songd)
-                    songeee = songe[0]
-                    for songee in songeee["Artists"]:
-                        if search_query.casefold() in songee.casefold():
-                            foundsongs.append(songd)
-            else:
-                foundsongs.append(songd)
-
-        if foundsongs:
-            for i in range(count):
-                integer = random.randint(0, len(foundsongs) - 1)
-                randomsongslist.append(foundsongs[integer])
-            await helpers.playqueue(randomsongslist)
-            return "Songs added to the queue!"
-        else:
-            await helpers.error("No Songs were found!")
-            return "No Songs were found!"
-    else:
+    if count > 10000:
         await helpers.error("You can only add 10,000 songs at a time!")
         return "You can only add 10,000 songs at a time!"
+
+    serversongslist = await helpers.get_song_list()
+    foundsongs = []
+
+    # No search criteria provided
+    if not keywords:
+        foundsongs = serversongslist.copy()
+
+    else:
+        search_type = keywords[0].casefold()
+        search_query = " ".join(keywords[1:]).casefold()
+
+        for song in serversongslist:
+
+            if search_type == "album:":
+                if search_query in song["Album"].casefold():
+                    foundsongs.append(song)
+
+            elif search_type == "artist:":
+                if any(
+                    search_query in artist.casefold()
+                    for artist in song["Artists"]
+                ):
+                    foundsongs.append(song)
+
+            else:
+                # Unknown filter, include all songs
+                foundsongs.append(song)
+
+    if not foundsongs:
+        await helpers.error("No Songs were found!")
+        return "No Songs were found!"
+
+    randomsongslist = [
+        random.choice(foundsongs)
+        for _ in range(count)
+    ]
+
+    await helpers.playqueue(randomsongslist)
+    return "Songs added to the queue!"
 
 
 
@@ -448,7 +476,7 @@ async def songs( page: int = 1):
     # If the page number is invalid, notify the user
     if page < 1 or page > total_pages:
         await helpers.error(f"Invalid page number. Please choose a page between 1 and {total_pages}.")
-        return
+        return f"Invalid page number. Please choose a page between 1 and {total_pages}."
 
     # Get the songs for the current page
     page_songs = songs[start:end]
@@ -463,6 +491,7 @@ async def songs( page: int = 1):
 
     # Send the message to the channel
     await helpers.embeded(f"**Page {page}/{total_pages}**", message)
+    return f"Page {page}/{total_pages}: {message}"
 
 
 
@@ -471,7 +500,9 @@ async def playall():
     # Check if the bot is currently playing audio
     if player.channel and (player.channel.is_playing() or player.channel.is_paused()):
         await helpers.error(f"{player.channel}, Could not play all songs, A song is currently playing")
-        return
+        return f"{player.channel}, Could not play all songs, A song is currently playing"
+    
+    await helpers.success(f"Playing all songs in the list!")
 
     songs = await helpers.get_song_list()
     
@@ -497,6 +528,7 @@ async def playall():
 
     await helpers.success("All songs have been played.")
     await player.channel.disconnect()
+    return "All songs have been played."
 
 
 
@@ -506,13 +538,13 @@ async def loop(song_name = ""):
     # Check if the bot is currently playing audio
     if player.channel and (player.channel.is_playing() or player.channel.is_paused()):
         await helpers.error("Could not loop song, A song is currently playing")
-        return
+        return f"Could not loop song, A song is currently playing"
 
         
-    if song_name == "":
+    if not song_name:
         print("song_name = ''")
-        await helpers.error("You need to specifify a id!")
-        return
+        await helpers.error("You need to specify an id!")
+        return "You need to specify an id!"
 
     # Join the song name parts into a single string (in case it's multi-word)
     
@@ -532,7 +564,7 @@ async def loop(song_name = ""):
         await helpers.error(
             f"Sorry, I can't find a song with id '{song_name}'. Please choose from !songs"
         )
-        return
+        return f"Sorry, I can't find a song with id '{song_name}'. Please choose from !songs"
 
     song = selected[0]
     # Play the song using FFmpeg
@@ -550,6 +582,7 @@ async def loop(song_name = ""):
         else:
             player.looping = False
             await helpers.error(f"Song '{song_name}' not found!")
+            return f"Song '{song_name}' not found!"
 
         while player.channel.is_playing():
             await asyncio.sleep(1)  # Wait until the song finishes
@@ -560,7 +593,7 @@ async def search( keywords):
     """Command to search for songs based on the artist, album or song name."""
     if not keywords:
         await helpers.error("Please provide some keywords to search for.")
-        return
+        return "Please provide some keywords to search for."
 
     # Join the keywords into a single search string
     try:
@@ -614,7 +647,7 @@ async def search( keywords):
             await helpers.error(
                 f"Invalid page number. Please choose a page between 1 and {total_pages}."
             )
-            return
+            return f"Invalid page number. Please choose a page between 1 and {total_pages}."
 
         # Get the songs for the current page
         page_songs = songs[start:end]
@@ -626,16 +659,17 @@ async def search( keywords):
         await helpers.embeded(f"**Page {page}/{total_pages}, Found the following songs matching '{search_query}':**", message)
     else:
         await helpers.error(f"No songs found matching '{search_query}'.")
-
+        return f"No songs found matching '{search_query}'."
 
 
 async def updatesongs():
     """Command to update the songs database for the bot."""
     if helpers.getsongs():
         await helpers.success(f"Song database updated successfully.")
+        return f"Song database updated successfully."
     else:
         await helpers.error(f"Error updating song database.")
-
+        return f"Error updating song database."
 
 
 
@@ -645,15 +679,16 @@ async def instantmix(id = "", limit=15):
 
         
     if id == "":
-        await helpers.error("You need to specifify an id!")
-        return
+        await helpers.error("You need to specify an id!")
+        return "You need to specify an id!"
 
     await helpers.success(f"Getting an Instant Mix from JellyFin server!")
     try:
         songs = await helpers.getinstantmix(id, limit)
         if songs:
-            await helpers.success(f"Instant Mix retrieved from JellyFin server!")
+            await helpers.success(f"Instant Mix added to the queue!")
         await helpers.playqueue(songs)
-        return
+        return "Instant Mix added to the queue!"
     except:
         await helpers.error(f"Could not Retrieve Instant Mix from JellyFin server!")
+        return "Could not Retrieve Instant Mix from JellyFin server!"

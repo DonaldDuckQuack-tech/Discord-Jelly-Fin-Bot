@@ -35,7 +35,7 @@ def setup(both, music_player):
 
 # Function to get a list of songs in the directory
 async def get_song_list():
-    """Return a list of MP3 files in the song directory."""
+    """Return a list of files in the song directory."""
     print("Getting song list...")
     song_list = player.song_list
     return song_list

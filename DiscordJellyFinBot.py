@@ -32,7 +32,7 @@ music_player = PlayerState()
 intents = discord.Intents.default()
 intents.message_content = True
 bot = command.Bot(command_prefix="!", intents=intents)
-music_commands.setup(bot, music_player)
+music_commands.setup(bot, music_player, VERSION)
 api.setup(music_player)
 bot.remove_command('help')
 
@@ -60,8 +60,6 @@ async def help(ctx):
     embed.add_field(name="!clearqueue", value="Command to clear the queue", inline=False)
     embed.add_field(name="!help", value="Shows this message", inline=False)
     embed.add_field(name="!instantmix", value="Command to add a instantmix to the queue", inline=False)
-    embed.add_field(name="!join", value="Command to make the bot join the voice channel", inline=False)
-    embed.add_field(name="!leave", value="Command to make the bot leave the voice channel", inline=False)
     embed.add_field(name="!loop", value="Command to loop a song", inline=False)
     embed.add_field(name="!play", value="Command to add a song/s to the queue", inline=False)
     embed.add_field(name="!playall", value="Command to play all the songs in the list one by one", inline=False)
@@ -78,7 +76,7 @@ async def help(ctx):
     embed.add_field(name="!pause", value="Command to pause currently playing audio", inline=False)
     embed.add_field(name="!resume", value="Command to resume currently playing audio", inline=False)
     embed.add_field(name="!playnow", value="Command to add a song/s next in the queue and play them", inline=False)
-    embed.add_field(name="!resume", value="Command to remove songs from the queue", inline=False)
+    embed.add_field(name="!remove", value="Command to remove songs from the queue", inline=False)
     
     channel = bot.get_channel(text_channel)
     await channel.send(embed=embed)
@@ -93,7 +91,7 @@ async def ping(ctx):
 async def play(ctx, *, song_name=""):
     '''Command to add a song/s to the queue.'''
     print(song_name)
-    await music_commands.play(song_name)
+    return await music_commands.play(song_name)
 
 
 @bot.command()
