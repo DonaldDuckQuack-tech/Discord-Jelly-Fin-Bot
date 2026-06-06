@@ -73,29 +73,37 @@ async def resume():
 async def stop():
     return await commands.stop()
 
-@app.get("/api/loop/")
-async def loop(id=""):
+@app.api_route("/api/loop/", methods=["GET", "POST"])
+async def loop(id=" "):
     return await commands.loop(id)
 
-@app.get("/api/instantmix/")
-async def instantmix():
-    return await commands.instantmix()
+@app.api_route("/api/instantmix/", methods=["GET", "POST"])
+async def instantmix(id=" ", limit=15):
+    return await commands.instantmix(id, limit)
 
 @app.get("/api/songs/")
 async def songs():
-    return await commands.songs()
+    return await commands.helpers.get_song_list()
 
 @app.get("/api/currentlyplayingsong/")
 async def currently_playing_song():
     return player.nowplaying
 
-@app.get("/api/playnow/")
-async def playnow():
-    return await commands.playnow()
+@app.api_route("/api/playnow/", methods=["GET", "POST"])
+async def playnow(id=" "):
+    return await commands.playnow(id)
 
-@app.get("/api/playnext/")
-async def playnext():
-    return await commands.playnext()
+@app.api_route("/api/playnext/", methods=["GET", "POST"])
+async def playnext(id=" "):
+    return await commands.playnext(id)
+
+@app.api_route("/api/remove/", methods=["GET", "POST"])
+async def remove(id=" "):
+    return await commands.remove(id)
+
+@app.get("/api/playall/")
+async def playall():
+    return await commands.playall()
 
 @app.get("/api/updatesongs/")
 async def updatesongs():

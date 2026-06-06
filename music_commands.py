@@ -97,6 +97,9 @@ async def ping():
 async def playnext(song_name):
     """Command to add a song to the queue."""    
     
+    if song_name == " ":
+        song_name = ""
+
     if not song_name:
         await helpers.error("You need to specifify an id!")
         return "You need to specifify an id!"
@@ -158,7 +161,10 @@ async def playnext(song_name):
 
 async def playnow(song_name):
     """Command to add a song to the queue."""
-        
+    
+    if song_name == " ":
+        song_name = ""
+
     if not song_name:
         await helpers.error("You need to specifify an id!")
         return "you need to specifify an id!"
@@ -224,7 +230,7 @@ async def pause():
     if  player.channel and (player.channel.is_playing() or player.channel.is_paused()):
         player.channel.pause()
         await helpers.success("Playback has been paused!")
-        print("Playback has been paused!")
+        return "Playback has been paused!"
     else:
         await helpers.error("Nothing to Pause!")
         return "Nothing to Pause!"
@@ -235,13 +241,13 @@ async def resume():
     if player.channel and (player.channel.is_playing() or player.channel.is_paused()):
         player.channel.resume()
         await helpers.success("Playback has been resumed!")
-        print("Playback has been resumed!")
+        return "Playback has been resumed!"
     else:
         await helpers.error("Nothing to resume!")
         return "Nothing to resume!"
 
 
-async def remove( *, song_name = ""):
+async def remove(song_name = ""):
     """Command to add a song to the queue."""
     
     if song_name == "":
@@ -540,6 +546,8 @@ async def loop(song_name = ""):
         await helpers.error("Could not loop song, A song is currently playing")
         return f"Could not loop song, A song is currently playing"
 
+    if song_name == " ":
+        song_name = ""
         
     if not song_name:
         print("song_name = ''")
@@ -568,6 +576,7 @@ async def loop(song_name = ""):
 
     song = selected[0]
     # Play the song using FFmpeg
+    
     while player.looping:
         await asyncio.sleep(1)
         if not player.looping:  # Check if playall_active is False to break the loop
@@ -676,7 +685,8 @@ async def updatesongs():
 async def instantmix(id = "", limit=15):
     """Command to add an instant mix to the queue."""
     # Check if the bot is currently playing audio
-
+    if id == " ":
+        id = ""
         
     if id == "":
         await helpers.error("You need to specify an id!")

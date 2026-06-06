@@ -120,7 +120,6 @@ async def resume(ctx):
 
 
 @bot.command()
-
 async def remove(ctx, *, song_name = ""):
     """Command to remove a song from the queue."""
     await music_commands.remove(song_name)
