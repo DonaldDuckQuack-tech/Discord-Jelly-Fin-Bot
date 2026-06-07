@@ -1,37 +1,118 @@
-# **Discord-Jelly-Fin-Bot**
+# Discord-Jelly-Fin-Bot
+A Bot to play and control music from a Jellyfin server on discord
 
-**Command:** !play **Usage:** play song by Id
+### Installation
+1. download the latest version from https://github.com/DonaldDuckQuack-tech/Discord-Jelly-Fin-Bot/releases/latest/
+2. from within the source code directory run: pip install -r requirements.txt
+3. fill in the required details in config.cfg.
+4. run: python main.py
 
-**Command:** !clearqueue **Usage:** Command to clear the queue
+### Commands
 
-**Command:** !help **Usage:** Shows this message
+#### <ins>!clearqueue</ins>
 
-**Command:** !instantmix **Usage:** Command to add a instantmix to the queue
+**Description:** Command to clear the queue.  
+**Usage:** !clearqueue
 
-**Command:** !join **Usage:** Command to make the bot join the voice channel
+#### <ins>!help</ins>
 
-**Command:** !leave **Usage:** Command to make the bot leave the voice channel
+**Description:** Lists all available commands  
+**Usage:** !help
 
-**Command:** !loop **Usage:** Command to loop a song
+#### <ins>!instantmix</ins>
 
-**Command:** !play **Usage:** Command to add a song to the queue
+**Description:** Command to add an instantmix to the queue.  
+**Usage:** !instantmix [id] [limit]
 
-**Command:** !playall **Usage:** Command to play all the songs in the list one by one
+#### <ins>!loop</ins>
 
-**Command:** !queue **Usage:** Command to show what is currently in the queue
+**Description:** Command to play loop a song from the list.  
+**Usage:** !loop [song_name]
 
-**Command:** !randomplaylist **Usage:** Command to add multiple songs to the queue based on album, artist or random song
+#### <ins>!pause</ins>
 
-**Command:** !randomsong **Usage:** Command to add a random song to the queue
+**Description:** Command to pause currently playing audio  
+**Usage:** !pause
 
-**Command:** !search **Usage:** Command to search for songs based on the artist, album or song name
+#### <ins>!ping</ins>
 
-**Command:** !skip **Usage:** Command to skip the currently playing song
+**Description:** Command to ping the bot  
+**Usage:** !ping
 
-**Command:** !songs **Usage:** Command to list all the available songs
+#### <ins>!play</ins>
 
-**Command:** !stop **Usage:** Command to stop any currently playing music
+**Description:** Command to add a song/s to the queue.  
+**Usage:** !play [song_name]
 
-**Command:** !updatesongs **Usage:** Command to update the songs database for the bot
+#### <ins>!playall</ins>
 
-**Command:** !version **Usage:** Command to show the bot name and version
+**Description:** Command to play all the songs in the list one by one.  
+**Usage:** !playall
+
+#### <ins>!playnext</ins>
+
+**Description:** Command to add a song/s next in the queue.  
+**Usage:** !playnext [song_name]
+
+#### <ins>!playnow</ins>
+
+**Description:** Command to add a song/s next in the queue and play them.  
+**Usage:** !playnow [song_name]
+
+#### <ins>!queue</ins>
+
+**Description:** Command to show what is currently in the queue.  
+**Usage:** !queue [page]
+
+#### <ins>!randomplaylist</ins>
+
+**Description:** Command to add multiple songs to the queue based on album, artist or random songs.  
+**Usage:** !randomplaylist [artist: or album:] <artist name> <number of songs to add>
+example: !randomplaylist  artist: P!NK 5
+
+#### <ins>!randomsong</ins>
+
+**Description:** Command to add a random song to the queue.  
+**Usage:** !randomsong
+
+#### <ins>!remove</ins>
+
+**Description:** Command to remove a song from the queue.  
+**Usage:** !remove [song_name]
+
+#### <ins>!resume</ins>
+
+**Description:** Command to resume currently playing audio  
+**Usage:** !resume
+
+#### <ins>!search</ins>
+
+**Description:** Command to search for songs based on the artist, album or song name.  
+**Usage:** !search <keywords...>
+
+#### <ins>!skip</ins>
+
+**Description:** Command to skip the currently playing song.  
+**Usage:** !skip
+
+#### <ins>!songs</ins>
+
+**Description:** Command to list all available songs, paginated by 10 songs per page.  
+**Usage:** !songs [page]
+
+#### <ins>!stop</ins>
+
+**Description:** Command to stop any currently playing music.  
+**Usage:** !stop
+
+#### <ins>!updatesongs</ins>
+
+**Description:** Command to update the songs database for the bot.  
+**Usage:** !updatesongs
+
+#### <ins>!version</ins>
+
+**Description:** Command to show JellyFin Music Bot Version  
+**Usage:** !version
+
+

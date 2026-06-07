@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Discord Jellyfin Bot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #121212;
+            color: white;
+            padding: 40px;
+        }
+
+        .card {
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 600px;
+        }
+
+        h1 {
+            color: #00bcd4;
+        }
+
+        pre {
+            background: #2a2a2a;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <h1>Discord Jellyfin Bot</h1>
+
+        <h2>Currently Playing</h2>
+        <pre id="playing">Loading...</pre>
+
+        <h2>Queue</h2>
+        <pre id="queue">Loading...</pre>
+    </div>
+
+    <script>
+        async function loadCurrentlyPlaying() {
+            try {
+                const response = await fetch('/api/currentlyplayingsong/');
+                const data = await response.json();
+
+                document.getElementById('playing').textContent =
+                    JSON.stringify(data, null, 2);
+            } catch (err) {
+                document.getElementById('playing').textContent =
+                    'Failed to load currently playing song';
+            }
+        }
+
+        async function loadQueue() {
+            try {
+                const response = await fetch('/api/queue/');
+                const data = await response.json();
+
+                document.getElementById('queue').textContent =
+                    JSON.stringify(data, null, 2);
+            } catch (err) {
+                document.getElementById('queue').textContent =
+                    'Failed to load queue';
+            }
+        }
+
+        async function refresh() {
+            await Promise.all([
+                loadCurrentlyPlaying(),
+                loadQueue()
+            ]);
+        }
+
+        refresh();
+
+        // Auto refresh every 5 seconds
+        setInterval(refresh, 5000);
+    </script>
+</body>
+
+</html>
