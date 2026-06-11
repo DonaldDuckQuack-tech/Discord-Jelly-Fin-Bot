@@ -78,8 +78,9 @@ async def loop(id=" "):
     return await commands.loop(id)
 
 @app.api_route("/api/instantmix/", methods=["GET", "POST"])
-async def instantmix(id=" ", limit=15):
-    return await commands.instantmix(id, limit)
+async def instantmix(id=" "):
+    id = tuple(id.split())
+    return await commands.instantmix(id)
 
 @app.get("/api/songs/")
 async def songs():

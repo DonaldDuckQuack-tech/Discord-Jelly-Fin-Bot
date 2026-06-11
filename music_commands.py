@@ -682,15 +682,23 @@ async def updatesongs():
 
 
 
-async def instantmix(id = "", limit=15):
+async def instantmix(id):
     """Command to add an instant mix to the queue."""
     # Check if the bot is currently playing audio
-    if id == " ":
-        id = ""
+     
         
-    if id == "":
+    if not id:
         await helpers.error("You need to specify an id!")
         return "You need to specify an id!"
+    
+    limit = 0
+    try:
+        limit = int(id[-1])
+    except ValueError:
+        limit = 15
+
+    ids = id[0]
+    id = ids
 
     await helpers.success(f"Getting an Instant Mix from JellyFin server!")
     try:

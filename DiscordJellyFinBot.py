@@ -226,9 +226,9 @@ async def updatesongs(ctx):
 
 
 @bot.command()
-async def instantmix(ctx, id = "", limit=15):
+async def instantmix(ctx, *keywords: str):
     '''Command to add an instantmix to the queue.'''
-    await music_commands.instantmix(id, limit)
+    await music_commands.instantmix(keywords)
 
 # Run the bot
 print("Getting songs database from jellyfin server...")
