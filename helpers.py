@@ -20,8 +20,7 @@ server_url = config.get('JellyFin', 'url')  # Replace with your Jellyfin server 
 api_key = config.get('JellyFin', 'api_key')  # Your Jellyfin API key
 download_urls = (
     server_url + "/Items/<id>/Download?api_key=a82d70c04eb544a896a8120fdbf8dae2"
-)  # Replace with your actual URL
-custom_download_path = config.get('JellyFin', 'download_path')
+)
 ffmpeg_path = config.get('FFMPEG', 'ffmpeg_path')
 ffmpeg_path_required = config.getboolean('FFMPEG', 'ffmpeg_path_required')
 
@@ -84,32 +83,6 @@ async def error(status):
     channel = bot.get_channel(text_channel)
     await channel.send(embed=embed)
 
-
-async def download(song_id):
-    url = download_urls.replace("<id>", song_id)
-    async with aiohttp.ClientSession() as session:
-        try:
-            async with session.get(url) as response:
-                if response.status == 200:  # Check if the response is OK
-                    os.makedirs(os.path.dirname(custom_download_path), exist_ok=True)
-                    with open(custom_download_path, "wb") as f:
-                        while True:
-                            chunk = await response.content.read(1024)
-                            if not chunk:
-                                break
-                            f.write(chunk)
-                    print(f"File {song_id}.flac downloaded successfully.")
-                else:
-                    print(
-                        f"Failed to download {song_id}. Status code: {response.status}"
-                    )
-        except aiohttp.ClientError as e:
-            print(f"An error occurred while downloading {song_id}: {e}")
-        else:
-            # This will execute if the download was successful and the response status was 200
-            print(f"Download of song {song_id} completed without any exceptions.")
-
-
 async def song(songed):
     song_list = await get_song_list()
     for song in song_list:
@@ -118,8 +91,7 @@ async def song(songed):
         songe = f"{song.get('Name')} | **Artist:** {Artist} | **Album:** {song.get('Album')} | **Id:** {song.get('Id')}"
         if songe == songed:
             print("The id is: " + song["Id"])
-            await download(song["Id"])
-            return True
+            return (song["Id"])
 
     print("Song: " + str(songed) + " not found")
     return False
@@ -163,7 +135,8 @@ async def nowplayingEmbed(songe):
         await channel.send(embed=embed)
 
 async def plays(songe):
-    if await song(songe):
+    song_id = await song(songe)
+    if song_id:
         channels = bot.get_channel(voice_channel)
         voice_client = discord.utils.get(bot.voice_clients, guild=channels.guild)
         if voice_client is None:
@@ -173,7 +146,7 @@ async def plays(songe):
 
         try:
             player.nowplaying = songe
-            song_path = custom_download_path
+            song_path = download_urls.replace("<id>", song_id)
             if ffmpeg_path_required == True:
                 audio_source = FFmpegPCMAudio(
                     song_path,
@@ -329,7 +302,9 @@ def songs():
                 "Album": album,  # Assuming album info is available
                 "AlbumId": albumId,
                 "Id": song["Id"],
+                "Runtime": int(song["RunTimeTicks"]) / 10000000
             }
+            print(songs)
 
             songed.append(songs)
         return songed, data
