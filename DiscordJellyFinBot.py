@@ -24,7 +24,6 @@ api_key = config.get('JellyFin', 'api_key')  # Your Jellyfin API key
 download_urls = (
     server_url + "/Items/<id>/Download?api_key=a82d70c04eb544a896a8120fdbf8dae2"
 )  # Replace with your actual URL
-custom_download_path = config.get('JellyFin', 'download_path')
 ffmpeg_path = config.get('FFMPEG', 'ffmpeg_path')
 ffmpeg_path_required = config.getboolean('FFMPEG', 'ffmpeg_path_required')
 
