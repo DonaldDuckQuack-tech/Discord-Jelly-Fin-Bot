@@ -302,9 +302,7 @@ def songs():
                 "Album": album,  # Assuming album info is available
                 "AlbumId": albumId,
                 "Id": song["Id"],
-                "Runtime": int(song["RunTimeTicks"]) / 10000000
             }
-            print(songs)
 
             songed.append(songs)
         return songed, data
