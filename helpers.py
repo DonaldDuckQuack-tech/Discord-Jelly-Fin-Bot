@@ -51,7 +51,7 @@ async def getId(songed):
 
 
 
-async def embeded(status, songs):
+async def embedded(status, songs):
     # Basic embed creation
     embed = discord.Embed(
         title=status,
@@ -356,7 +356,7 @@ async def process_queue():
 
         player.playing = False
 
-        await embeded(
+        await embedded(
             "Queue is Empty",
             "Add more songs to continue playing!"
         )
