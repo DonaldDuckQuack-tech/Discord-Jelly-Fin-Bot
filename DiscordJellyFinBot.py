@@ -4,8 +4,9 @@ import configparser
 import api
 import music_commands
 from player import PlayerState
+from pathlib import Path
+import json
 
-    
 # Create a ConfigParser object
 config = configparser.ConfigParser()
 
@@ -34,8 +35,6 @@ bot = command.Bot(command_prefix="!", intents=intents)
 music_commands.setup(bot, music_player, VERSION)
 api.setup(music_player)
 bot.remove_command('help')
-
-
 
 
 
@@ -229,6 +228,12 @@ async def instantmix(ctx, *keywords: str):
     '''Command to add an instantmix to the queue.'''
     await music_commands.instantmix(keywords)
 
+@bot.command()
+async def playlist(ctx, *keywords: str):
+    '''Command to add an instantmix to the queue.'''
+    userid = ctx.author.id
+    await music_commands.playlist(keywords, userid)
+
 # Run the bot
 print("Getting songs database from jellyfin server...")
 if music_commands.helpers.getsongs():
@@ -236,7 +241,14 @@ if music_commands.helpers.getsongs():
 else:
     print("Error getting songs database.")
 print("Downloaded. Starting bot...")
-
+file_path = Path("playlist.json")
+if file_path.is_file():
+    print("Playlist file exists.")
+else:
+    data = {}
+    # 2. Open a file in write mode ('w') and save the data
+    with open("playlist.json", "w") as file:
+        json.dump(data, file, indent=4)
 
 
 async def main():

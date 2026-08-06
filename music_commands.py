@@ -148,10 +148,7 @@ async def playnext(song_name):
     list = player.queue_list[:]
     player.queue_list.clear()
     for i in selected:
-        artists_array = i.get("Artists")
-        artist = artists_array[0]
-        songe = f"{i.get('Name')} | **Artist:** {artist} | **Album:** {i.get('Album')} | **Id:** {i.get('Id')}"
-        player.queue_list.append(songe)
+        player.queue_list.append(i)
     for ii in list:
         player.queue_list.append(ii)
     
@@ -213,10 +210,7 @@ async def playnow(song_name):
     list = player.queue_list[:]
     player.queue_list.clear()
     for i in selected:
-        artists_array = i.get("Artists")
-        artist = artists_array[0]
-        songe = f"{i.get('Name')} | **Artist:** {artist} | **Album:** {i.get('Album')} | **Id:** {i.get('Id')}"
-        player.queue_list.append(songe)
+        player.queue_list.append(i)
     for ii in list:
         player.queue_list.append(ii)
     
@@ -296,11 +290,8 @@ async def remove(song_name = ""):
 
     for i in selected:
         for ii in player.queue_list[:]:
-            artists_array = i.get("Artists")
-            artist = artists_array[0]
-            songe = f"{i.get('Name')} | **Artist:** {artist} | **Album:** {i.get('Album')} | **Id:** {i.get('Id')}"
-            if ii == songe:
-                player.queue_list.remove(songe)
+            if ii == i:
+                player.queue_list.remove(i)
 
     await helpers.success("Removed " + str(len(selected)) + " ids from the Queue!")
     return "Removed " + str(len(selected)) + " ids from the Queue!"
@@ -350,7 +341,7 @@ async def queue( page=1):
         correct_page_songs = []
 
         for song in page_songs:
-            songed = f"{song} \n"
+            songed = f"{await helpers.getSongData(song)} \n"
             correct_page_songs.append(songed)
 
         # Create the message for the page
@@ -710,3 +701,22 @@ async def instantmix(id):
     except:
         await helpers.error(f"Could not Retrieve Instant Mix from JellyFin server!")
         return "Could not Retrieve Instant Mix from JellyFin server!"
+
+async def playlist(keywords, userid):
+    if keywords:
+        await helpers.success("Correct")
+    else:
+        await helpers.error("Please Enter a Valid Sub-Command")
+
+    if keywords[0] == "list".casefold():
+        print("test")
+    if keywords[0] == "create".casefold():
+        if keywords[1]:
+            try:
+                id = await helpers.create_playlist(userid, keywords[1])
+                await helpers.success(f'Sucessfuly created playlist "{keywords[1]}" with id {id}')
+            except Exception as e:
+                await helpers.error("An error occurred while creating your playlist!")
+                print(e)
+        else:
+            await helpers.error("No playlist name was given!")

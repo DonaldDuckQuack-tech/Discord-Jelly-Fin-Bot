@@ -1,9 +1,9 @@
 import configparser
-import os 
-import aiohttp
 import discord
 from discord import FFmpegPCMAudio
 import requests
+import json
+import uuid
 
 config = configparser.ConfigParser()
 
@@ -26,6 +26,9 @@ ffmpeg_path_required = config.getboolean('FFMPEG', 'ffmpeg_path_required')
 
 player = None
 bot = None
+
+with open('playlist.json', 'r') as playlistFile:
+        playlistData = json.load(playlistFile)
 
 def setup(both, music_player):
     global bot, player
@@ -83,26 +86,22 @@ async def error(status):
     channel = bot.get_channel(text_channel)
     await channel.send(embed=embed)
 
-async def song(songed):
+async def getSongData(songed):
     song_list = await get_song_list()
     for song in song_list:
-        Artists = song.get("Artists")
-        Artist = Artists[0]
-        songe = f"{song.get('Name')} | **Artist:** {Artist} | **Album:** {song.get('Album')} | **Id:** {song.get('Id')}"
-        if songe == songed:
-            print("The id is: " + song["Id"])
-            return (song["Id"])
+        if song["Id"] == songed:   
+            Artists = song.get("Artists")
+            Artist = Artists[0]
+            songe = f"{song.get('Name')} | **Artist:** {Artist} | **Album:** {song.get('Album')} | **Id:** {song.get('Id')}"
+            return songe
 
     print("Song: " + str(songed) + " not found")
-    return False
+    return None
 
 async def song2(songed):
     song_list = await get_song_list()
     for song in song_list:
-        Artists = song.get("Artists")
-        Artist = Artists[0]
-        songe = f"{song.get('Name')} | **Artist:** {Artist} | **Album:** {song.get('Album')} | **Id:** {song.get('Id')}"
-        if songe == songed:   
+        if song["Id"] == songed:   
             return song
 
     print("Song: " + str(songed) + " not found")
@@ -135,43 +134,40 @@ async def nowplayingEmbed(songe):
         await channel.send(embed=embed)
 
 async def plays(songe):
-    song_id = await song(songe)
-    if song_id:
-        channels = bot.get_channel(voice_channel)
-        voice_client = discord.utils.get(bot.voice_clients, guild=channels.guild)
-        if voice_client is None:
-            voice_client = await channels.connect()
+    channels = bot.get_channel(voice_channel)
+    voice_client = discord.utils.get(bot.voice_clients, guild=channels.guild)
+    if voice_client is None:
+        voice_client = await channels.connect()
 
         player.channel = voice_client
 
-        try:
-            player.nowplaying = songe
-            song_path = download_urls.replace("<id>", song_id)
-            if ffmpeg_path_required == True:
-                audio_source = FFmpegPCMAudio(
-                    song_path,
-                    executable=ffmpeg_path,
-                    options='-filter:a "loudnorm=I=-16:TP=-1.5:LRA=11"',
-                )
-            else:
-                audio_source = FFmpegPCMAudio(
-                    song_path, options='-filter:a "loudnorm=I=-16:TP=-1.5:LRA=11"'
-                )
-            
-            player.song_finished.clear()
+    try:
+        player.nowplaying = songe
+        song_path = download_urls.replace("<id>", songe)
+        if ffmpeg_path_required == True:
+            audio_source = FFmpegPCMAudio(
+                song_path,
+                executable=ffmpeg_path,
+                options='-filter:a "loudnorm=I=-16:TP=-1.5:LRA=11"',
+            )
+        else:
+            audio_source = FFmpegPCMAudio(
+                song_path, options='-filter:a "loudnorm=I=-16:TP=-1.5:LRA=11"'
+            )
+        
+        player.song_finished.clear()
 
-            def after_playback(error):
-                bot.loop.call_soon_threadsafe(
-                    player.song_finished.set
-                )
+        def after_playback(error):
+            bot.loop.call_soon_threadsafe(
+                player.song_finished.set
+            )
 
-            voice_client.play(audio_source, after=after_playback)
-            return True
-        except:
-            await error("Song Failed to play!")
-            await voice_client.stop()
-            return False
-    return False
+        voice_client.play(audio_source, after=after_playback)
+        return True
+    except:
+        await error("Song Failed to play!")
+        await voice_client.stop()
+        return False
 
 
 async def getinstantmix(id, limit):
@@ -315,16 +311,7 @@ import asyncio
 async def playqueue(songs):
 
     for song in songs:
-        artist = song["Artists"][0]
-
-        queue_item = (
-            f"{song['Name']} | "
-            f"**Artist:** {artist} | "
-            f"**Album:** {song['Album']} | "
-            f"**Id:** {song['Id']}"
-        )
-
-        player.queue_list.append(queue_item)
+        player.queue_list.append(song["Id"])
 
     await success(f"Added {len(songs)} song(s) to queue!")
 
@@ -363,3 +350,21 @@ async def process_queue():
 
         if player.channel:
             await player.channel.disconnect()
+
+async def read_playlists(userid):
+    with open('data.json', 'r') as file:
+        data = json.load(file)
+        
+
+async def create_playlist(userid, name):
+    my_uuid = str(uuid.uuid4())
+    if userid not in playlistData:
+        playlistData[userid]= {}
+    playlistData[userid] = {my_uuid: {
+    "Name" : name,
+    "SongCount": 0,
+    "Songs": []
+    }
+    }
+    json.dump(playlistData, playlistFile, indent=4)
+    return my_uuid
