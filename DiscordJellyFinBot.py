@@ -22,7 +22,7 @@ text_channel = config.getint('Bot', 'text_channel_id')
 server_url = config.get('JellyFin', 'url')  # Replace with your Jellyfin server URL
 api_key = config.get('JellyFin', 'api_key')  # Your Jellyfin API key
 download_urls = (
-    server_url + "/Items/<id>/Download?api_key=a82d70c04eb544a896a8120fdbf8dae2"
+    server_url + "/Items/<id>/Download?api_key=" + api_key
 )  # Replace with your actual URL
 ffmpeg_path = config.get('FFMPEG', 'ffmpeg_path')
 ffmpeg_path_required = config.getboolean('FFMPEG', 'ffmpeg_path_required')
