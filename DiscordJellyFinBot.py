@@ -23,7 +23,7 @@ text_channel = config.getint('Bot', 'text_channel_id')
 server_url = config.get('JellyFin', 'url')  # Replace with your Jellyfin server URL
 api_key = config.get('JellyFin', 'api_key')  # Your Jellyfin API key
 download_urls = (
-    server_url + "/Items/<id>/Download?api_key=a82d70c04eb544a896a8120fdbf8dae2"
+    server_url + "/Items/<id>/Download?api_key=" + api_key
 )  # Replace with your actual URL
 ffmpeg_path = config.get('FFMPEG', 'ffmpeg_path')
 ffmpeg_path_required = config.getboolean('FFMPEG', 'ffmpeg_path_required')
@@ -36,12 +36,10 @@ music_commands.setup(bot, music_player, VERSION)
 api.setup(music_player)
 bot.remove_command('help')
 
-
-
 @bot.event
 async def on_ready():
     print(f"Logged in as {bot.user}")
-
+    await music_commands.helpers.startUp()
 
 
 
@@ -75,6 +73,8 @@ async def help(ctx):
     embed.add_field(name="!resume", value="Command to resume currently playing audio", inline=False)
     embed.add_field(name="!playnow", value="Command to add a song/s next in the queue and play them", inline=False)
     embed.add_field(name="!remove", value="Command to remove songs from the queue", inline=False)
+    embed.add_field(name="!playlist", value="Command that adds playlist support, see !playlist usage for more info", inline=False)
+    embed.add_field(name="!auth", value="Access web portal ", inline=False)
     
     channel = bot.get_channel(text_channel)
     await channel.send(embed=embed)
@@ -231,8 +231,13 @@ async def instantmix(ctx, *keywords: str):
 @bot.command()
 async def playlist(ctx, *keywords: str):
     '''Command to add an instantmix to the queue.'''
-    userid = ctx.author.id
-    await music_commands.playlist(keywords, userid)
+    userid = str(ctx.author.id)
+    await music_commands.playlist(keywords, userid, discord=True)
+
+@bot.command()
+async def auth(ctx):
+    userid = str(ctx.author.id)
+    await music_commands.auth(ctx, userid)
 
 # Run the bot
 print("Getting songs database from jellyfin server...")
@@ -241,16 +246,10 @@ if music_commands.helpers.getsongs():
 else:
     print("Error getting songs database.")
 print("Downloaded. Starting bot...")
-file_path = Path("playlist.json")
-if file_path.is_file():
-    print("Playlist file exists.")
-else:
-    data = {}
-    # 2. Open a file in write mode ('w') and save the data
-    with open("playlist.json", "w") as file:
-        json.dump(data, file, indent=4)
-
 
 async def main():
     await bot.start(TOKEN)
+
+async def exit():
+    await music_commands.helpers.exit()
 

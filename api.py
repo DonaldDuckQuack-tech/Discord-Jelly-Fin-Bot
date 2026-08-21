@@ -28,6 +28,11 @@ async def web_home():
 async def home():
     return {"status": "online"}
 
+@app.api_route("/api/auth/", methods=["GET", "POST"])
+async def auth(userid, token):
+    result = await commands.helpers.auth(userid, token)
+    return result
+
 @app.api_route("/api/play/", methods=["GET", "POST"])
 async def play(song_name=" "):    
     try:
@@ -110,6 +115,15 @@ async def playall():
 async def updatesongs():
     return await commands.updatesongs()
 
+@app.api_route("/api/playlist/", methods=["GET", "POST"])
+async def play(userid, song_name=" "):    
+    try:
+        song_name = song_name.split()
+        print(song_name)
+        result = await commands.playlist(song_name, userid, discord=False)
+        return result
+    except Exception as e:
+        return (f"error playing: {e}")
 
 async def start_api(port):
     print(f"Starting API on port {port}...")
@@ -119,5 +133,4 @@ async def start_api(port):
 
 # Run both together
 async def main():
-    
     await start_api(port)
